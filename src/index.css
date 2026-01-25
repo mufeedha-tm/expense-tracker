@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Input Fields */
+.input {
+  @apply w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#2C3E50] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2EC4B6];
+}
+
+/* Primary Buttons */
+.btn-primary {
+  @apply bg-[#2EC4B6] hover:bg-[#FFD166] text-[#1B2A49] font-bold py-2 px-4 rounded-lg transition-colors;
+}
+
+/* Error Messages */
+.error {
+  @apply text-red-500 text-sm mt-1;
+}
+
+/* Table Row Hover Effect */
+tbody tr {
+  @apply border-b border-gray-600 transition-transform hover:scale-105; /* Use valid Tailwind scale */
+}
