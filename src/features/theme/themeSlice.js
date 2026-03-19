@@ -9,7 +9,7 @@ const themeSlice = createSlice({
     toggleTheme: (state) => {
       state.dark = !state.dark
       localStorage.setItem('theme', state.dark ? 'dark' : 'light')
-      document.documentElement.classList.toggle('dark')
+      document.documentElement.classList.toggle('dark', state.dark)
     }
   }
 })

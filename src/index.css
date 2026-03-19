@@ -1,23 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Input Fields */
-.input {
-  @apply w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#2C3E50] text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2EC4B6];
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-['DM_Sans'] bg-[#f7f7f2] text-slate-900 dark:bg-[#07111f] dark:text-slate-100 antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 24%),
+      radial-gradient(circle at top right, rgba(251, 191, 36, 0.1), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 247, 242, 0.96));
+  }
+
+  .dark body {
+    background-image:
+      radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 24%),
+      radial-gradient(circle at top right, rgba(251, 191, 36, 0.16), transparent 24%),
+      linear-gradient(180deg, rgba(6, 14, 28, 0.95), rgba(7, 17, 31, 1));
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-['Space_Grotesk'];
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    @apply focus:outline-none;
+  }
 }
 
-/* Primary Buttons */
-.btn-primary {
-  @apply bg-[#2EC4B6] hover:bg-[#FFD166] text-[#1B2A49] font-bold py-2 px-4 rounded-lg transition-colors;
+@layer components {
+  .glass {
+    @apply bg-white/75 dark:bg-slate-900/70 backdrop-blur-xl border border-white/70 dark:border-white/10;
+  }
+  
+  .glass-card {
+    @apply glass rounded-[28px] shadow-[0_25px_80px_-28px_rgba(15,23,42,0.35)];
+  }
+
+  .input {
+    @apply w-full rounded-2xl border border-slate-200/80 bg-white/80 px-4 py-3.5 text-slate-900 placeholder:text-slate-400 shadow-sm transition-all focus:border-sky-400 focus:ring-4 focus:ring-sky-400/15 dark:border-white/10 dark:bg-slate-950/45 dark:text-slate-50 dark:placeholder:text-slate-500;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-sky-600 active:scale-[0.98] dark:bg-sky-500 dark:text-slate-950 dark:hover:bg-sky-400;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200/80 bg-white/80 px-5 py-3 font-semibold text-slate-700 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-100 dark:hover:border-white/20 dark:hover:bg-slate-900/70;
+  }
+
+  .error {
+    @apply mt-1 text-sm font-medium text-rose-500;
+  }
+
+  .stat-card {
+    @apply glass-card p-6 transition-transform duration-300 hover:-translate-y-1;
+  }
+
+  .section-label {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-sky-500 dark:text-sky-300;
+  }
+
+  .panel-muted {
+    @apply rounded-[24px] border border-slate-200/70 bg-white/70 p-5 shadow-[0_18px_45px_-28px_rgba(15,23,42,0.28)] dark:border-white/10 dark:bg-slate-950/35;
+  }
+
+  .category-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-transparent px-4 py-2 text-sm font-medium transition-all;
+  }
 }
 
-/* Error Messages */
-.error {
-  @apply text-red-500 text-sm mt-1;
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
-
-/* Table Row Hover Effect */
-tbody tr {
-  @apply border-b border-gray-600 transition-transform hover:scale-105; /* Use valid Tailwind scale */
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300 hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600;
 }

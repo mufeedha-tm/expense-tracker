@@ -1,0 +1,12 @@
+{
+  "users": [],
+  "expenses": [],
+  "categories": [
+    { "id": "1", "name": "Food", "icon": "Utensils" },
+    { "id": "2", "name": "Transport", "icon": "Car" },
+    { "id": "3", "name": "Shopping", "icon": "ShoppingBag" },
+    { "id": "4", "name": "Bills", "icon": "FileText" },
+    { "id": "5", "name": "Entertainment", "icon": "Film" },
+    { "id": "6", "name": "Other", "icon": "Box" }
+  ]
+}

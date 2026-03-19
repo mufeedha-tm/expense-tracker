@@ -1,56 +1,115 @@
-import { useSelector, useDispatch } from 'react-redux'
-import { deleteExpense } from '../../features/expenses/expenseSlice'
 import { useState } from 'react'
-import EditExpenseModal from './EditExpenseModal'
-import { formatINR } from '../../utils/currency'
-import { FiEdit, FiTrash2 } from 'react-icons/fi'
-import { motion } from 'framer-motion'
+import { useDispatch, useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
+import { AnimatePresence, motion } from 'framer-motion'
 import toast from 'react-hot-toast'
+import { FiCalendar, FiEdit, FiEye, FiTrash2 } from 'react-icons/fi'
+import { deleteExpense } from '../../features/expenses/expenseSlice'
+import { formatINR } from '../../utils/currency'
+import { getCategoryMeta } from '../../utils/expenseMeta'
+import EditExpenseModal from './EditExpenseModal'
 
-export default function ExpenseList() {
-  const expenses = useSelector(state => state.expenses.list)
+export default function ExpenseList({ expenses }) {
+  const MotionArticle = motion.article
+  const { loading } = useSelector(state => state.expenses)
   const dispatch = useDispatch()
   const [editing, setEditing] = useState(null)
 
-  const handleDelete = (id) => {
-    dispatch(deleteExpense(id))
-    toast.success('Expense deleted')
+  const handleDelete = async (id) => {
+    const result = await dispatch(deleteExpense(id))
+    if (deleteExpense.fulfilled.match(result)) {
+      toast.success('Expense deleted')
+    } else {
+      toast.error('Failed to delete expense')
+    }
+  }
+
+  if (loading && expenses.length === 0) {
+    return <div className="panel-muted text-center text-slate-500 dark:text-slate-400">Loading expenses...</div>
+  }
+
+  if (expenses.length === 0) {
+    return (
+      <div className="glass-card p-8 text-center">
+        <h3 className="text-2xl font-bold text-slate-950 dark:text-white">No matching expenses</h3>
+        <p className="mt-3 text-slate-500 dark:text-slate-400">
+          Try changing your search or filters, or add a brand new transaction.
+        </p>
+      </div>
+    )
   }
 
   return (
-    <div className="bg-[#F5F7FA] dark:bg-[#1A1F2B] p-6 rounded-xl shadow-lg space-y-4">
-      <h2 className="text-xl font-bold text-[#1B2A49] dark:text-white">Recent Expenses</h2>
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto text-left">
-          <thead>
-            <tr className="border-b border-gray-300 dark:border-gray-700">
-              <th className="px-4 py-2">#</th>
-              <th className="px-4 py-2">Title</th>
-              <th className="px-4 py-2">Amount</th>
-              <th className="px-4 py-2">Category</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expenses.map((exp, index) => (
-              <motion.tr key={exp.id} whileHover={{ scale: 1.02 }} className="border-b border-gray-200 dark:border-gray-700">
-                <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2">{exp.title}</td>
-                <td className="px-4 py-2">{formatINR(exp.amount)}</td>
-                <td className="px-4 py-2">{exp.category}</td>
-                <td className="px-4 py-2">{exp.date}</td>
-                <td className="px-4 py-2 flex space-x-2">
-                  <button onClick={() => setEditing(exp)} className="p-1 rounded hover:bg-[#2EC4B6] transition-colors"><FiEdit /></button>
-                  <button onClick={() => handleDelete(exp.id)} className="p-1 rounded hover:bg-[#FFD166] transition-colors"><FiTrash2 /></button>
-                </td>
-              </motion.tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      <div className="grid gap-4">
+        <AnimatePresence>
+          {expenses.map((expense, index) => {
+            const category = getCategoryMeta(expense.category)
+
+            return (
+              <MotionArticle
+                key={expense.id}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ delay: index * 0.03 }}
+                className="glass-card p-5"
+              >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className={`rounded-[22px] p-4 ${category.badgeClass}`}>
+                      <category.icon className="text-2xl" />
+                    </div>
+
+                    <div>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <h3 className="text-xl font-bold text-slate-950 dark:text-white">{expense.title}</h3>
+                        <span className={`category-pill ${category.badgeClass}`}>{expense.category}</span>
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                        <span className="flex items-center gap-2">
+                          <FiCalendar />
+                          {new Date(expense.date).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </span>
+                        <span>ID #{expense.id}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center lg:justify-end">
+                    <div className="text-left sm:text-right">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">Amount</p>
+                      <p className="text-2xl font-bold text-slate-950 dark:text-white">{formatINR(expense.amount)}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Link to={`/expenses/${expense.id}`} className="btn-secondary">
+                        <FiEye />
+                        View
+                      </Link>
+                      <button onClick={() => setEditing(expense)} className="btn-secondary">
+                        <FiEdit />
+                        Edit
+                      </button>
+                      <button onClick={() => handleDelete(expense.id)} className="btn-secondary text-rose-500 dark:text-rose-300">
+                        <FiTrash2 />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </MotionArticle>
+            )
+          })}
+        </AnimatePresence>
       </div>
 
-      {editing && <EditExpenseModal expense={editing} close={() => setEditing(null)} />}
-    </div>
+      <AnimatePresence>{editing && <EditExpenseModal expense={editing} close={() => setEditing(null)} />}</AnimatePresence>
+    </>
   )
 }
